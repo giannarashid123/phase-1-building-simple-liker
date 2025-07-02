@@ -1,20 +1,8 @@
-// Defining text characters for the empty and full hearts for you to use later.
-const EMPTY_HEART = '♡'
-const FULL_HEART = '♥'
-
-// Your JavaScript code goes here!
-
-
-
-
-//------------------------------------------------------------------------------
-// Don't change the code below: this function mocks the server response
-//------------------------------------------------------------------------------
-
+// Provided function to simulate a server call
 function mimicServerCall(url="http://mimicServer.example.com", config={}) {
   return new Promise(function(resolve, reject) {
     setTimeout(function() {
-      let isRandomFailure = Math.random() < .2
+      let isRandomFailure = Math.random() < 0.2;
       if (isRandomFailure) {
         reject("Random server error. Try again.");
       } else {
@@ -23,3 +11,32 @@ function mimicServerCall(url="http://mimicServer.example.com", config={}) {
     }, 300);
   });
 }
+
+// Add .hidden class to the modal on page load
+const errorModal = document.getElementById("modal");
+errorModal.classList.add("hidden");
+
+// Select all heart elements
+const hearts = document.querySelectorAll(".like-glyph");
+
+// Loop through each heart and attach click listener
+hearts.forEach(heart => {
+  heart.addEventListener("click", () => {
+    mimicServerCall()
+      .then(() => {
+        // Toggle heart on success
+        if (heart.textContent === "♡") {
+          heart.textContent = "♥";
+          heart.classList.add("activated-heart");
+        } else {
+          heart.textContent = "♡";
+          heart.classList.remove("activated-heart");
+        }
+      })
+      .catch((error) => {
+        // Show error modal on failure
+        errorModal.classList.remove("hidden");
+        document.getElementById("modal-message").textContent = error;
+
+        // Hide modal after 3 seconds
+        setTimeout(()
